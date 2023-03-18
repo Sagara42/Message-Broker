@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBroker", "MessageBroker\MessageBroker.csproj", "{DE1E4DB4-F876-4619-9CB0-97BA2F0C80B2}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBroker.Client", "..\MessageBroker.Client\MessageBroker.Client.csproj", "{FBC3978A-74D0-4EC1-8A05-96636B776862}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageBroker", "MessageBroker\MessageBroker.csproj", "{DE1E4DB4-F876-4619-9CB0-97BA2F0C80B2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{9F8EDA2C-F790-4FED-940B-AF2C7B1A0F7A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBroker.Sandbox", "MessageBroker.Sandbox\MessageBroker.Sandbox.csproj", "{2740CB34-C934-4F75-8268-CE6C647C3F0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageBroker.Sandbox", "MessageBroker.Sandbox\MessageBroker.Sandbox.csproj", "{2740CB34-C934-4F75-8268-CE6C647C3F0D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageBroker.Client", "MessageBroker.Client\MessageBroker.Client.csproj", "{C9D5DB3F-A531-473E-8E6F-AC25ED470D0D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,14 +21,14 @@ Global
 		{DE1E4DB4-F876-4619-9CB0-97BA2F0C80B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE1E4DB4-F876-4619-9CB0-97BA2F0C80B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE1E4DB4-F876-4619-9CB0-97BA2F0C80B2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FBC3978A-74D0-4EC1-8A05-96636B776862}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FBC3978A-74D0-4EC1-8A05-96636B776862}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FBC3978A-74D0-4EC1-8A05-96636B776862}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FBC3978A-74D0-4EC1-8A05-96636B776862}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2740CB34-C934-4F75-8268-CE6C647C3F0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2740CB34-C934-4F75-8268-CE6C647C3F0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2740CB34-C934-4F75-8268-CE6C647C3F0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2740CB34-C934-4F75-8268-CE6C647C3F0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9D5DB3F-A531-473E-8E6F-AC25ED470D0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9D5DB3F-A531-473E-8E6F-AC25ED470D0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9D5DB3F-A531-473E-8E6F-AC25ED470D0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9D5DB3F-A531-473E-8E6F-AC25ED470D0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
