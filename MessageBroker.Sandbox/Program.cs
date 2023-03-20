@@ -3,6 +3,8 @@ using NLog.Targets;
 using NLog;
 using System;
 using MessageBroker.Client.Network.Client;
+using System.Threading.Tasks;
+using System.Threading;
 
 namespace MessageBroker.Sandbox
 {
@@ -11,40 +13,6 @@ namespace MessageBroker.Sandbox
         static void Main(string[] args)
         {
             LogManager.Configuration = NLogDefaultConfiguration;
-
-            var broker = new Broker("0.0.0.0", 6677);
-            broker.Start();
-
-            var client = BrokerClientFactory.GetClient("127.0.0.1", 6677);
-            client.Connect();
-
-            client.DeclareTopic("test_a", "/test/a");
-            client.DeclareTopic("test_b", "/test/b");
-
-            var test_a_subscription = client.Subscribe("test_a");
-            test_a_subscription.OnMessageReceived += (ea) =>
-            {
-                Console.WriteLine("test_a received");
-                
-                ea.Ack();
-
-                client.Unsubscribe(test_a_subscription.Id);
-                client.DeleteTopic("test_a");
-            };
-
-            var test_b_subscription = client.Subscribe("test_b");
-            test_b_subscription.OnMessageReceived += (ea) =>
-            {
-                Console.WriteLine("test_b received");
-
-                ea.Ack();
-                client.Unsubscribe(test_b_subscription.Id);
-                client.DeleteTopic("test_b");
-            };
-
-            client.Publish("/test/*", new byte[] { 0x01, 0x02, 0x03, 0x04 });
-
-            Console.Read();
         }
 
         public static LoggingConfiguration NLogDefaultConfiguration

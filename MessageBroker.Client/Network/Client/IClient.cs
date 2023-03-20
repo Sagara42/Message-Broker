@@ -9,7 +9,7 @@ namespace MessageBroker.Client.Network.Client
         Socket Socket { get; }
         void Connect();
         void Disconnect();
-        void Send(IMessage message);
+        bool Send(IMessage message);
         Subscription Subscribe(string topic_name);
         void Unsubscribe(Guid topic_id);
         void Publish(string path, byte[] data);

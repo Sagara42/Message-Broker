@@ -11,6 +11,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageBroker.Sandbox", "Me
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MessageBroker.Client", "MessageBroker.Client\MessageBroker.Client.csproj", "{C9D5DB3F-A531-473E-8E6F-AC25ED470D0D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MessageBroker.Tests", "MessageBroker.Tests\MessageBroker.Tests.csproj", "{684B5C5C-B694-458B-9A31-F08C0CF08F09}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,12 +31,17 @@ Global
 		{C9D5DB3F-A531-473E-8E6F-AC25ED470D0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9D5DB3F-A531-473E-8E6F-AC25ED470D0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9D5DB3F-A531-473E-8E6F-AC25ED470D0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{684B5C5C-B694-458B-9A31-F08C0CF08F09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{684B5C5C-B694-458B-9A31-F08C0CF08F09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{684B5C5C-B694-458B-9A31-F08C0CF08F09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{684B5C5C-B694-458B-9A31-F08C0CF08F09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{2740CB34-C934-4F75-8268-CE6C647C3F0D} = {9F8EDA2C-F790-4FED-940B-AF2C7B1A0F7A}
+		{684B5C5C-B694-458B-9A31-F08C0CF08F09} = {9F8EDA2C-F790-4FED-940B-AF2C7B1A0F7A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B618D68B-9589-4810-881D-79034C7FF3CB}

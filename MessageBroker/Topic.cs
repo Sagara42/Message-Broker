@@ -25,8 +25,7 @@ namespace MessageBroker
         {
             Name = name;
             Path = path;
-
-            _cancellation_token = new();
+            
             _subscriptions = new();
 
             _client_communication = new BrokerClientCommunicator(clientStore);
@@ -62,6 +61,7 @@ namespace MessageBroker
     
         public void StartMessageHandling()
         {
+            _cancellation_token = new();
             Task.Factory.StartNew(() =>
             {
                 while (!_cancellation_token.IsCancellationRequested)

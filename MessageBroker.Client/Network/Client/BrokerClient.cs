@@ -19,15 +19,15 @@ namespace MessageBroker.Client.Network.Client
         private ConcurrentDictionary<Guid, Subscription> _subscriptions;
         private ConcurrentDictionary<Guid, InWaitResponeMessage> _in_wait_messages;
         private bool _is_disposed;
+        private ManualResetEventSlim _manual_reset_event;
 
         public BrokerClient(string host, int port)
-        {
-            Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
+        {           
             _end_point = new IPEndPoint(IPAddress.Parse(host), port);
             _serializer = new BrokerSerializer();
             _subscriptions = new();
             _in_wait_messages = new();
+            _manual_reset_event = new(false);
         }
 
         public Subscription Subscribe(string topic_name)
@@ -37,7 +37,7 @@ namespace MessageBroker.Client.Network.Client
             var response = SendMessageAndWaitResponse(subscribe_message);
             if (response.ResponseType == ResponseType.Success)
             {
-                var subscription = new Subscription(topic_name);
+                var subscription = new Subscription(new_subscription_id, topic_name);
                 _subscriptions.TryAdd(new_subscription_id, subscription);
                 return subscription;
             }
@@ -88,7 +88,7 @@ namespace MessageBroker.Client.Network.Client
             var in_wait_message = new InWaitResponeMessage { MessageId = message.NetIdentity };
 
             _ = _in_wait_messages.TryAdd(message.NetIdentity, in_wait_message);
-
+            
             Send(message);
 
             in_wait_message.EventSlim.Wait(TimeSpan.FromSeconds(5));
@@ -101,27 +101,45 @@ namespace MessageBroker.Client.Network.Client
             throw new Exception();
         }
 
-        public void Send(IMessage message)
+        public bool Send(IMessage message)
         {
-            if(Socket != null && Socket.Connected)
+            try
             {
-                Socket.Send(_serializer.Serialize(message));
+                if (Socket != null && Socket.Connected)
+                {
+                    var data = _serializer.Serialize(message);
+
+                    return Socket.Send(data) == data.Length;
+                }
             }
+            catch(Exception ex)
+            {
+                Console.WriteLine($"Send ex {ex.Message}");
+            }
+
+            return false;
         }
 
         public void Connect()
         {
+            _manual_reset_event.Reset();
+            
             _is_disposed = false;
-            try
+
+            Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+            var connect_task = Socket.ConnectAsync(_end_point);
+
+            Task.WaitAny(new[] { connect_task }, (int)TimeSpan.FromSeconds(5).TotalMilliseconds);
+
+            if (Socket.Connected)
             {
-                Socket.Connect(_end_point);
+                StartReceiveMessages();
             }
-            catch
+            else
             {
                 Reconnect();
             }
-
-            StartReceiveMessages();
         }
 
         public void Disconnect()
@@ -140,35 +158,57 @@ namespace MessageBroker.Client.Network.Client
 
         private void Reconnect()
         {
+            Console.WriteLine("Reconnect");
+
+            if (Socket != null && Socket.Connected)
+                return;
+
             if (_is_disposed == true)
                 return;
 
+            _manual_reset_event.Set();
+
+            Thread.Sleep(2000);
+
             Connect();
 
-            foreach(var sub in _subscriptions.Values)            
-                Send(new SubscribeBrokerMessage(sub.Id, sub.TopicName));           
+            if (Socket.Connected)
+                foreach (var sub in _subscriptions.Values)
+                    SendMessageAndWaitResponse(new SubscribeBrokerMessage(sub.Id, sub.TopicName));    
         }
 
         private void StartReceiveMessages()
         {
             Task.Factory.StartNew(() =>
             {
-                while (Socket.Connected)
+                while (Socket.Connected && _manual_reset_event.IsSet == false)
                 {
                     try
                     {
                         var message_len_array = Socket.ReadFromNetworkStream(4);
                         var message_len = BitConverter.ToInt32(message_len_array);
+                        if (message_len == 0)
+                            throw new Exception("connection lost");
+                        
+                        if (message_len < 0 || message_len >= short.MaxValue)
+                            throw new Exception("stream corrupted");
+
                         var message_array = Socket.ReadFromNetworkStream(message_len);
+
                         var opcode = BitConverter.ToInt16(message_array);
                         var message = GetMessage(opcode, message_len_array, message_array);
 
                         Task.Factory.StartNew(() => HandleMessage(message));
                     }
-                    catch
+                    catch(Exception ex)
                     {
-                        Socket?.Disconnect(true);
+                        Console.WriteLine(ex.Message);
+                        Socket?.Shutdown(SocketShutdown.Both);
+                        Socket?.Disconnect(false);
+                        Socket?.Close();
+                        Socket?.Dispose();
                         Reconnect();
+                        break;
                     }
                 }
             });

@@ -14,7 +14,7 @@ namespace MessageBroker.Network
     internal class TcpServer
     {
         private readonly HashSet<Thread> _listeningThreads = new();
-        private readonly Socket _listeningSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        private Socket _listeningSocket;
 
         private readonly string _host;
         private readonly int _port;
@@ -36,6 +36,7 @@ namespace MessageBroker.Network
 
         public void Start()
         {
+            _listeningSocket = new(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             _listeningSocket.Bind(new IPEndPoint(IPAddress.Parse(_host), _port));
             _listeningSocket.Listen(50);
 
@@ -49,7 +50,6 @@ namespace MessageBroker.Network
 
         public void Stop()
         {
-            _listeningSocket.Shutdown(SocketShutdown.Both);
             _listeningSocket.Close();
             _listeningThreads.Clear();
         }
@@ -68,7 +68,14 @@ namespace MessageBroker.Network
                 socket?.Dispose();
             }
 
-            _listeningSocket.BeginAccept(AcceptCallback, null);
+            try
+            {
+                _listeningSocket.BeginAccept(AcceptCallback, null);
+            }
+            catch
+            {
+
+            }
         }
 
         private void StartHandlingClientMessages(Socket socket)
@@ -89,9 +96,8 @@ namespace MessageBroker.Network
 
                     OnMessageReceived?.Invoke(client, message);
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    socket?.Disconnect(false);
                     socket?.Dispose();
                     OnClientDisconnected?.Invoke(client);
                 }

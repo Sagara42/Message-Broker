@@ -11,9 +11,9 @@ namespace MessageBroker.Client
 
         public Action<PublishData> OnMessageReceived;
 
-        public Subscription(string topic_name)
+        public Subscription(Guid id, string topic_name)
         {
-            Id = Guid.NewGuid();
+            Id = id;
             TopicName = topic_name;
         }
     }

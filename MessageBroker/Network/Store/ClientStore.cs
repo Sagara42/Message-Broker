@@ -2,6 +2,7 @@
 using MessageBroker.Network.Store.Base;
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MessageBroker.Network.Store
@@ -22,6 +23,11 @@ namespace MessageBroker.Network.Store
         public IClient Get(Guid id)
         {
             return _clients.Values.FirstOrDefault(s => s.NetIdentity == id);
+        }
+
+        public IEnumerable<IClient> GetClients()
+        {
+            return _clients.Values;
         }
 
         public void Remove(Guid id)

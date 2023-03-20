@@ -36,6 +36,9 @@ namespace MessageBroker
 
         public void Start()
         {
+            foreach (var topic in _topics.Values)
+                topic.StartMessageHandling();
+
             _server.Start();
         }
 
@@ -44,8 +47,10 @@ namespace MessageBroker
             foreach (var topic in _topics.Values)
                 topic.StopMessageHandling();
 
-            _topics.Clear();
             _server.Stop();
+
+            foreach (var client in _client_store.GetClients())
+                client.Socket.Close();
         }
 
         public void UseTopicStore(ITopicStore store) => _topic_store = store;
@@ -101,6 +106,12 @@ namespace MessageBroker
                 if (topic.Name == message.Name)
                 {
                     client.SendMessage(new ResponseBrokerMessage(message.NetIdentity, ResponseType.Exception, $"Topic {message.Name} already declared"));
+                    return;
+                }
+
+                if(topic.Path == message.Path)
+                {
+                    client.SendMessage(new ResponseBrokerMessage(message.NetIdentity, ResponseType.Exception, $"Topic {topic.Name} with path {message.Path} already declared"));
                     return;
                 }
             }
